@@ -353,10 +353,10 @@ function ConsentPage({ patientId }: { patientId: string }) {
       {step === 'consent' && (
         <>
           <div className="flex-1 overflow-y-auto">
-            <ul className="px-4 py-4 space-y-3 pb-36">
-              {policies.map((policy) => (
-                <li key={policy.key} className="flex gap-2.5 items-start">
-                  <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-gray-400 mt-2" />
+            <ol className="px-4 py-4 space-y-3 pb-36">
+              {policies.map((policy, index) => (
+                <li key={policy.key} className="flex gap-1 items-baseline">
+                  <span className="flex-shrink-0 text-gray-400 font-medium leading-relaxed" style={{ fontSize: '12px', minWidth: '14px', lineHeight: '1.625' }}>{index + 1}.</span>
                   <span className="flex-1">
                     <span className="text-gray-600 leading-relaxed" style={{ fontSize: '12px' }}>
                       {policy.text}
@@ -372,7 +372,7 @@ function ConsentPage({ patientId }: { patientId: string }) {
                   </span>
                 </li>
               ))}
-            </ul>
+            </ol>
           </div>
 
           <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 pb-8 pt-4 space-y-3">
