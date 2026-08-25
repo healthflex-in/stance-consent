@@ -136,7 +136,15 @@ function ConsentPage({ patientId }: { patientId: string }) {
   })
 
   const [recordConsent, { loading: submitting }] = useMutation(RECORD_CONSENT, {
-    onCompleted: () => setStep('done'),
+    onCompleted: () => {
+      const params = new URLSearchParams(window.location.search)
+      const redirect = params.get('redirect')
+      if (redirect) {
+        window.location.href = redirect
+      } else {
+        setStep('done')
+      }
+    },
     onError: () => toast.error('Something went wrong. Please try again.'),
   })
 
