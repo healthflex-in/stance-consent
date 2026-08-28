@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams } from 'next/navigation'
 import { gql, useQuery, useMutation } from '@apollo/client'
 import { ApolloProvider } from '@apollo/client'
@@ -73,6 +73,11 @@ function ConsentPage({ patientId }: { patientId: string }) {
   const [otp, setOtp] = useState('')
   const [otpError, setOtpError] = useState('')
   const [agreed, setAgreed] = useState(false)
+
+  // Prevent initiateOTP from firing more than once (it sends an email).
+  // consentData starts undefined and then resolves, which would otherwise
+  // re-trigger the effect and send duplicate OTP emails.
+  const otpInitiatedRef = useRef(false)
 
   // Email collection state
   const [newEmail, setNewEmail] = useState('')
@@ -150,7 +155,13 @@ function ConsentPage({ patientId }: { patientId: string }) {
 
   useEffect(() => {
     if (!patientId) return
+    // consentData is undefined while the query is in flight — wait for it to resolve.
+    if (consentData === undefined) return
+    // Only fire initiateOTP once; re-renders when consentData changes must not
+    // send additional emails.
+    if (otpInitiatedRef.current) return
     if (consentData?.hasUserAcceptedPolicies) { setStep('already_accepted'); return }
+    otpInitiatedRef.current = true
     initiateOTP({ variables: { patientId } })
   }, [patientId, consentData])
 
